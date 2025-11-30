@@ -5,13 +5,16 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "node --env-file=.env generateArticles.js"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.0",
     "@supabase/supabase-js": "^2.86.0",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "newsapi": "^2.4.1",
     "nodemon": "^3.1.11",

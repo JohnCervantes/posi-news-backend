@@ -1,31 +1,34 @@
-import { fetchNews } from "./newsService.js";
-import { analyzeText } from "./sentiment.js";
-import saveToSupabase from "./output.js";
+import express from "express";
+import supabase from "./supabaseClient.js";
+import cors from 'cors';
+const app = express();
+const port = 3000;
 
-(async function main() {
-  try {
-    const data = await fetchNews({ pageSize: process.env.PAGE_SIZE });
-    const articles = data.articles || [];
+app.use(cors());
 
-    for (const art of articles) {
-      const text = `${art.title || ""} ${art.description || ""} ${
-        art.content || ""
-      }`.trim();
-      const analysis = analyzeText(text);
-      if (analysis.label === "positive") {
-        delete art.content;
-        delete art.source;
-        art["publishedat"] = art.publishedAt;
-        art["urltoimage"] = art.urlToImage;
-        delete art.urlToImage;
-        delete art.publishedAt;
-
-        saveToSupabase({ ...art, ...analysis });
-      }
-    }
-  } catch (err) {
-    console.error("Error:", err);
-    process.exitCode = 1;
+app.get("/", async (req, res) => {
+  const { data, error } = await supabase
+    .from("articles")
+    .select("author, title, urltoimage, publishedat, description")
+    .order("publishedat", { ascending: false });
+  if (error) {
+    res.status(400).send({ error: error.message });
   }
-})();
+  res.send(data);
+});
 
+app.get("/article", async (req, res) => {
+  const article_id = req.query.article_id;
+  const { data, error } = await supabase
+    .from("articles")
+    .select("author, title, urltoimage, publishedat, content")
+    .eq("article_id", article_id).single();
+  if (error) {
+    res.status(400).send({ error: error.message });
+  }
+  res.send(data);
+});
+
+app.listen(port, () => {
+  console.log(`Express app listening at http://localhost:${port}`);
+});
