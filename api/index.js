@@ -22,7 +22,7 @@ app.get("/api/article", async (req, res) => {
   const article_id = req.query.article_id;
   const { data, error } = await supabase
     .from("articles")
-    .select("author, title, urltoimage, publishedat, content")
+    .select("author, title, urltoimage, publishedat, content, url")
     .eq("article_id", article_id)
     .single();
   if (error) {
