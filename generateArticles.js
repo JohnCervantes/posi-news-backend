@@ -14,7 +14,7 @@ import { generateContent } from "./claudeApi.js";
       }`.trim();
       const analysis = analyzeText(text);
       if (analysis.label === "positive") {
-        art.content = await generateContent(art.title);
+        art.content = await generateContent(art.title, art.source.name);
         const regex = /(cannot|unable to)\s+(find|locate)/i
 
         if(regex.test(art.content)){
