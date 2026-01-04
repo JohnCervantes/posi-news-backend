@@ -10,7 +10,9 @@ app.use(cors());
 app.get("/api", async (req, res) => {
   const { data, error } = await supabase
     .from("articles")
-    .select("author, title, urltoimage, publishedat, description, article_id")
+    .select(
+      "creator, title, image_url, publishedat, description, article_id, country, category"
+    )
     .order("publishedat", { ascending: false });
   if (error) {
     res.status(400).send({ error: error.message });
@@ -22,7 +24,7 @@ app.get("/api/article", async (req, res) => {
   const article_id = req.query.article_id;
   const { data, error } = await supabase
     .from("articles")
-    .select("author, title, urltoimage, publishedat, content, url")
+    .select("creator, title, image_url, publishedat, content, url, country")
     .eq("article_id", article_id)
     .single();
   if (error) {

@@ -2,14 +2,13 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const anthropic = new Anthropic();
 
-export async function generateContent(title, source) {
-  const prompt = process.env.CLAUDE_PROMPT.replace(
-    "article.title",
-    title
-  ).replace("article.source", source);
+export async function generateContent(title, source, language) {
+  const prompt = process.env.CLAUDE_PROMPT.replace("article.title", title)
+    .replace("article.source", source)
+    .replace("article.language", language);
   try {
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929", // Specify the Claude model you want to use
+      model: "claude-sonnet-4-5-20250929",
       max_tokens: 1024,
       messages: [
         {

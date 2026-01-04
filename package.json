@@ -16,6 +16,7 @@
     "@supabase/supabase-js": "^2.86.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "google-translate-api-next": "^0.1.0",
     "newsapi": "^2.4.1",
     "nodemon": "^3.1.11",
     "vader-sentiment": "^1.1.3"
