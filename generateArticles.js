@@ -6,13 +6,16 @@ import translate from "google-translate-api-next";
 
 (async function main() {
   const targetCountries = [
-    { name: "India", code: "in", lang: "hi", langName: "hindi" }, // Asia #1
-    { name: "Nigeria", code: "ng", lang: "en", langName: "english" }, // Africa #1
-    { name: "Russia", code: "ru", lang: "ru", langName: "russian" }, // Europe #1
-    { name: "USA", code: "us", lang: "en", langName: "english" }, // N. America #1
-    { name: "Brazil", code: "br", lang: "pt", langName: "portuguese" }, // S. America #1
+    { name: "Vietnam", code: "vn", lang: "vi", langName: "Vietnamese" },
+    { name: "Costa Rica", code: "cr", lang: "es", langName: "Spanish" },
+    { name: "UAE", code: "ae", lang: "ar", langName: "Arabic" },
+    { name: "Turkey", code: "tr", lang: "tr", langName: "Turkish" },
+    { name: "Colombia", code: "co", lang: "es", langName: "Spanish" },
+    { name: "USA", code: "us", lang: "en", langName: "English" },
+    { name: "India", code: "in", lang: "hi", langName: "hindi" },
+    { name: "Nigeria", code: "ng", lang: "en", langName: "English" },
   ];
-  const MAX_REQ_PER_COUNTRY = 2; // 40 pages max per day
+  const MAX_REQ_PER_COUNTRY = 10; // 40 pages max per day
   let globalRequestCount = 0;
 
   for (const country of targetCountries) {
@@ -20,9 +23,10 @@ import translate from "google-translate-api-next";
     let countryRequests = 0;
 
     while (countryRequests < MAX_REQ_PER_COUNTRY) {
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      await new Promise((resolve) => setTimeout(resolve, 1 * 60 * 1000));
       let data;
       try {
+        console.log("fetching articles... " + country.name);
         data = await fetchNews(country.code, country.lang, nextCursor);
       } catch (error) {
         console.error(error.message);
@@ -35,11 +39,12 @@ import translate from "google-translate-api-next";
           continue;
         } else {
           console.error("API Error:", error.message);
-          break;
+          continue;
         }
       }
       const articles = data.results || [];
       nextCursor = data.nextPage;
+      countryRequests++;
 
       // if (globalRequestCount > 0 && globalRequestCount % 30 === 0) {
       //   console.log(
@@ -61,23 +66,49 @@ import translate from "google-translate-api-next";
           }
         }
         const text = `${art.title || ""} ${art.description || ""}`.trim();
-        const analysis = analyzeText(text);
+        const analysis = analyzeText(text, country.name);
         if (
           analysis.label === "positive" &&
           (await duplicateCheck(art.link)).length === 0
         ) {
+          console.log("uplifting article found");
           art.content = await generateContent(
             art.title,
             art.source_name,
             country.langName
           );
+          const ban = [
+            "2026",
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces",
+            "astrology"
+          ];
 
-          const regex = /(cannot|unable to)\s+(find|locate)/i;
+          const hasMatch = ban.some((substring) =>
+            art.title.toLowerCase().includes(substring.toLowerCase())
+          );
+          if (hasMatch) {
+            continue;
+          }
+
+          const regex =
+            /(cannot|unable to|ability to|don't have)\s+(find|locate|access|search)/i;
 
           if (regex.test(art.content)) {
             continue;
           }
           art["publishedat"] = art.pubDate;
+          console.log("Saving to DB...");
           saveToSupabase({ ...art, ...analysis });
         }
         countryRequests++;

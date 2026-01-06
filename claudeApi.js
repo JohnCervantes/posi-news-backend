@@ -18,7 +18,6 @@ export async function generateContent(title, source, language) {
       ],
     });
 
-    console.log("Generated content:", response.content[0].text);
     return response.content[0].text;
   } catch (error) {
     console.error("Error generating content:", error);

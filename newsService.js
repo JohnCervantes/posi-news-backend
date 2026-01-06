@@ -1,12 +1,15 @@
 const positiveQueries = {
-  en: '(positive OR uplifting OR inspiring OR "good news" OR heartwarming OR hopeful)',
-  hi: '(सकारात्मक OR प्रेरणादायक OR उत्साहवर्धक OR "अच्छی خبر" OR आशाजनक OR मानवता)',
-  zh: '(正面 OR 励志 OR 鼓舞人心 OR "正能量" OR "好消息" OR 温馨 OR 希望)',
-  id: '(positif OR inspiratif OR "berita baik" OR menyentuh OR "kabar baik" OR penuh harapan)',
-  ur: '(مثبت OR متاثر کن OR "اچھی خبر" OR پرامید OR خوش آئند OR انسانیت)',
+  en: '(positive OR uplifting OR inspiring OR "good news" OR heartwarming OR hopeful OR success OR growth)',
+  hi: '(सकारात्मक OR प्रेरणादायक OR उत्साहवर्धक OR "अच्छी खबर" OR आशाजनक OR प्रगति OR सफलता)',
+  zh: '(正面 OR 励志 OR 鼓舞人心 OR "正能量" OR "好消息" OR 温馨 OR 成功)',
+  id: '(positif OR inspiratif OR "berita baik" OR menyentuh OR "kabar baik" OR penuh harapan OR sukses)',
+  ur: '(مثبت OR متاثر کن OR "اچھی خبر" OR پرامید OR خوش آئند OR کامیابی)',
+  tr: '(olumlu OR ilham verici OR "iyi haber" OR umut verici OR başarı OR gelişme OR sevindirici)', // तुर्की
+  vi: '(tích cực OR truyền cảm hứng OR "tin tốt" OR hy vọng OR thành công OR phát triển)', // वियतनामी
+  es: '(positivo OR inspirador OR "buenas noticias" OR alentador OR esperanza OR éxito OR crecimiento)', // स्पेनिश (Costa Rica/Colombia)
 };
 
-const categories = "science,technology,health,environment,business";
+const categories = "science,technology,health,lifestyle,education";
 
 export async function fetchNews(country, language, nextCursor) {
   if (!process.env.NEWSAPI_KEY)
